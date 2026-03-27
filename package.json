@@ -1,0 +1,55 @@
+{
+  "name": "arc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:seed": "npx tsx prisma/seed.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:40957/git/AdhityaRX/ARC"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@auth/prisma-adapter": "^2.11.1",
+    "@prisma/client": "^6.19.2",
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.27",
+    "bcryptjs": "^3.0.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.7.0",
+    "next": "^16.2.1",
+    "next-auth": "^5.0.0-beta.30",
+    "postcss": "^8.5.8",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.1",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^6.0.2",
+    "zod": "^4.3.6",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.1",
+    "prisma": "^6.19.2"
+  }
+}
