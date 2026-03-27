@@ -39,7 +39,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   };
 
   return (
-    <div className="sticky bottom-0 p-4 bg-[var(--arc-bg-primary)]">
+    <div className="sticky bottom-0 p-3 sm:p-4 bg-[var(--arc-bg-primary)] pb-[env(safe-area-inset-bottom,12px)]">
       <div className="max-w-3xl mx-auto relative">
         <div className="flex items-end gap-2 bg-[var(--arc-bg-tertiary)] border border-[var(--arc-border-default)] rounded-[var(--arc-radius-lg)] p-2 focus-within:border-[var(--arc-crimson-500)] transition-[border-color] duration-[var(--arc-transition-fast)]">
           <textarea
@@ -50,7 +50,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
             placeholder="Describe your project idea..."
             disabled={disabled}
             rows={1}
-            className="flex-1 bg-transparent text-[var(--arc-text-primary)] text-[0.9375rem] placeholder:text-[var(--arc-text-tertiary)] resize-none outline-none py-2 px-2 max-h-[200px]"
+            className="flex-1 bg-transparent text-[var(--arc-text-primary)] text-base placeholder:text-[var(--arc-text-tertiary)] resize-none outline-none py-2 px-2 max-h-[200px]"
           />
           <button
             onClick={handleSend}

@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import {
   Plus,
   MessageSquare,
-  Settings,
   PanelLeftClose,
   PanelLeft,
   LogOut,
@@ -19,6 +18,19 @@ interface SidebarProps {
   userRole?: string;
 }
 
+function useIsMobile() {
+  useEffect(() => {
+    const check = () => {
+      if (window.innerWidth < 768) {
+        useProjectStore.getState().setSidebarOpen(false);
+      }
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+}
+
 export function Sidebar({ userRole }: SidebarProps) {
   const router = useRouter();
   const params = useParams();
@@ -27,8 +39,11 @@ export function Sidebar({ userRole }: SidebarProps) {
     setProjects,
     sidebarOpen,
     toggleSidebar,
+    setSidebarOpen,
     setCurrentProject,
   } = useProjectStore();
+
+  useIsMobile();
 
   useEffect(() => {
     fetch("/api/projects")
@@ -38,6 +53,12 @@ export function Sidebar({ userRole }: SidebarProps) {
       })
       .catch(console.error);
   }, [setProjects]);
+
+  const closeSidebarOnMobile = useCallback(() => {
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  }, [setSidebarOpen]);
 
   const createProject = async () => {
     const res = await fetch("/api/projects", {
@@ -49,6 +70,7 @@ export function Sidebar({ userRole }: SidebarProps) {
       const project = await res.json();
       setProjects([project, ...projects]);
       router.push(`/project/${project.id}`);
+      closeSidebarOnMobile();
     }
   };
 
@@ -65,6 +87,14 @@ export function Sidebar({ userRole }: SidebarProps) {
         >
           <PanelLeft className="w-5 h-5 text-[var(--arc-text-secondary)]" />
         </button>
+      )}
+
+      {/* Backdrop overlay on mobile */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+        />
       )}
 
       <aside
@@ -116,6 +146,7 @@ export function Sidebar({ userRole }: SidebarProps) {
                   onClick={() => {
                     setCurrentProject(project);
                     router.push(`/project/${project.id}`);
+                    closeSidebarOnMobile();
                   }}
                   className={cn(
                     "w-full flex items-center gap-2 px-2 py-2 rounded-[var(--arc-radius-sm)] text-sm text-left transition-colors cursor-pointer",
@@ -136,7 +167,10 @@ export function Sidebar({ userRole }: SidebarProps) {
         <div className="p-3 border-t border-[var(--arc-border-subtle)] space-y-1">
           {userRole === "super_admin" && (
             <button
-              onClick={() => router.push("/admin")}
+              onClick={() => {
+                router.push("/admin");
+                closeSidebarOnMobile();
+              }}
               className="w-full flex items-center gap-2 px-2 py-2 rounded-[var(--arc-radius-sm)] text-sm text-[var(--arc-text-secondary)] hover:bg-[var(--arc-bg-hover)] hover:text-[var(--arc-text-primary)] transition-colors cursor-pointer"
             >
               <Shield className="w-4 h-4" />
