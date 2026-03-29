@@ -172,3 +172,55 @@ pre code.hljs {
   animation: blink 0.8s ease-in-out infinite;
   margin-left: 2px;
 }
+
+/* IPL Predictor Light Theme Override */
+.ipl-light {
+  --arc-bg-primary: #f8fafc;
+  --arc-bg-secondary: #f1f5f9;
+  --arc-bg-tertiary: #ffffff;
+  --arc-bg-hover: #e2e8f0;
+  --arc-text-primary: #0f172a;
+  --arc-text-secondary: #475569;
+  --arc-text-tertiary: #94a3b8;
+  --arc-border-subtle: rgba(0, 0, 0, 0.06);
+  --arc-border-default: rgba(0, 0, 0, 0.10);
+  --arc-border-strong: rgba(0, 0, 0, 0.16);
+}
+
+/* IPL Live pulse animation */
+@keyframes live-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+}
+
+.animate-live-pulse {
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+/* IPL Score transition */
+@keyframes score-flash {
+  0% { background-color: rgba(234, 179, 8, 0.2); }
+  100% { background-color: transparent; }
+}
+
+.score-flash {
+  animation: score-flash 0.5s ease-out;
+}
+
+/* Smooth scrollbar for IPL components */
+.ipl-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.ipl-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ipl-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.ipl-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
