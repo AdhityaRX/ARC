@@ -36,6 +36,10 @@ model User {
   apiUsage       ApiUsage[]
   accounts       Account[]
   sessions       Session[]
+  monitoringSessions MonitoringSession[]
+  activityLogs       ActivityLog[]
+  screenshots        Screenshot[]
+  monitoringConfig   MonitoringConfig?
 
   @@map("users")
 }
@@ -131,4 +135,82 @@ model ApiUsage {
   project Project? @relation(fields: [projectId], references: [id])
 
   @@map("api_usage")
+}
+
+enum MonitoringStatus {
+  online
+  idle
+  offline
+}
+
+model MonitoringSession {
+  id        String           @id @default(cuid())
+  userId    String           @map("user_id")
+  status    MonitoringStatus @default(offline)
+  machineId String?          @map("machine_id") @db.VarChar(255)
+  hostname  String?          @db.VarChar(255)
+  ipAddress String?          @map("ip_address") @db.VarChar(45)
+  startedAt DateTime         @default(now()) @map("started_at")
+  endedAt   DateTime?        @map("ended_at")
+  lastHeartbeat DateTime     @default(now()) @map("last_heartbeat")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("monitoring_sessions")
+}
+
+model ActivityLog {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  periodStart    DateTime @map("period_start")
+  periodEnd      DateTime @map("period_end")
+  mouseClicks    Int      @default(0) @map("mouse_clicks")
+  mouseDistance   Int      @default(0) @map("mouse_distance")
+  keystrokes     Int      @default(0)
+  scrollEvents   Int      @default(0) @map("scroll_events")
+  activeWindowTitle String? @map("active_window_title") @db.VarChar(500)
+  activeAppName  String?  @map("active_app_name") @db.VarChar(255)
+  isIdle         Boolean  @default(false) @map("is_idle")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, periodStart])
+  @@map("activity_logs")
+}
+
+model Screenshot {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  fileName  String   @map("file_name") @db.VarChar(255)
+  filePath  String   @map("file_path") @db.VarChar(1000)
+  fileSize  Int?     @map("file_size")
+  width     Int?
+  height    Int?
+  activeWindowTitle String? @map("active_window_title") @db.VarChar(500)
+  capturedAt DateTime @default(now()) @map("captured_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, capturedAt])
+  @@map("screenshots")
+}
+
+model MonitoringConfig {
+  id                    String  @id @default(cuid())
+  userId                String? @unique @map("user_id")
+  screenshotIntervalMin Int     @default(5) @map("screenshot_interval_min")
+  trackMouseClicks      Boolean @default(true) @map("track_mouse_clicks")
+  trackKeystrokes       Boolean @default(true) @map("track_keystrokes")
+  trackMouseMovement    Boolean @default(true) @map("track_mouse_movement")
+  trackActiveWindow     Boolean @default(true) @map("track_active_window")
+  trackScreenshots      Boolean @default(true) @map("track_screenshots")
+  idleTimeoutMin        Int     @default(5) @map("idle_timeout_min")
+  isEnabled             Boolean @default(true) @map("is_enabled")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("monitoring_configs")
 }

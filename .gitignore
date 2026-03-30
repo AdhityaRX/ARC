@@ -33,3 +33,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# monitoring screenshots
+/public/screenshots
+
+# desktop agent build artifacts
+/desktop-agent/node_modules
+/desktop-agent/dist
+/desktop-agent/release

@@ -9,6 +9,7 @@ import {
   PanelLeft,
   LogOut,
   Shield,
+  Monitor,
 } from "lucide-react";
 import { useProjectStore, type Project } from "@/stores/projectStore";
 import { Button } from "@/components/ui/Button";
@@ -166,16 +167,28 @@ export function Sidebar({ userRole }: SidebarProps) {
         {/* Footer */}
         <div className="p-3 border-t border-[var(--arc-border-subtle)] space-y-1">
           {userRole === "super_admin" && (
-            <button
-              onClick={() => {
-                router.push("/admin");
-                closeSidebarOnMobile();
-              }}
-              className="w-full flex items-center gap-2 px-2 py-2 rounded-[var(--arc-radius-sm)] text-sm text-[var(--arc-text-secondary)] hover:bg-[var(--arc-bg-hover)] hover:text-[var(--arc-text-primary)] transition-colors cursor-pointer"
-            >
-              <Shield className="w-4 h-4" />
-              Admin Panel
-            </button>
+            <>
+              <button
+                onClick={() => {
+                  router.push("/admin");
+                  closeSidebarOnMobile();
+                }}
+                className="w-full flex items-center gap-2 px-2 py-2 rounded-[var(--arc-radius-sm)] text-sm text-[var(--arc-text-secondary)] hover:bg-[var(--arc-bg-hover)] hover:text-[var(--arc-text-primary)] transition-colors cursor-pointer"
+              >
+                <Shield className="w-4 h-4" />
+                Admin Panel
+              </button>
+              <button
+                onClick={() => {
+                  router.push("/admin/monitoring");
+                  closeSidebarOnMobile();
+                }}
+                className="w-full flex items-center gap-2 px-2 py-2 rounded-[var(--arc-radius-sm)] text-sm text-[var(--arc-text-secondary)] hover:bg-[var(--arc-bg-hover)] hover:text-[var(--arc-text-primary)] transition-colors cursor-pointer"
+              >
+                <Monitor className="w-4 h-4" />
+                Monitoring
+              </button>
+            </>
           )}
           <button
             onClick={() => router.push("/api/auth/signout")}
