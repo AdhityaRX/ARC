@@ -172,3 +172,43 @@ pre code.hljs {
   animation: blink 0.8s ease-in-out infinite;
   margin-left: 2px;
 }
+
+/* Print styles for the candidate report */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    background: white !important;
+    color: #111 !important;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Convert dark surfaces to light for print */
+  [style*="--arc-bg-tertiary"],
+  .bg-\[var\(--arc-bg-tertiary\)\] {
+    background: #f8f8f8 !important;
+  }
+
+  .bg-\[var\(--arc-bg-secondary\)\] {
+    background: #ffffff !important;
+  }
+
+  /* Avoid awkward breaks inside cards */
+  .break-inside-avoid,
+  [class*="rounded-"] {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure background colors of badges/score rings render */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

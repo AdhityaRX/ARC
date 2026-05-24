@@ -10,10 +10,19 @@ export default async function DashboardLayout({
   const session = await auth();
   if (!session) redirect("/login");
 
+  const role = (session.user as { role?: string }).role;
+  if (role !== "super_admin" && role !== "hr") {
+    redirect("/login?error=no_access");
+  }
+
   return (
     <div className="h-[100dvh] flex">
-      <Sidebar userRole={(session.user as { role?: string }).role} />
-      <main className="flex-1 min-w-0 md:ml-[260px] h-full overflow-hidden">
+      <Sidebar
+        userRole={role}
+        userName={session.user.name}
+        userEmail={session.user.email}
+      />
+      <main className="flex-1 min-w-0 md:ml-[260px] h-full overflow-y-auto">
         {children}
       </main>
     </div>

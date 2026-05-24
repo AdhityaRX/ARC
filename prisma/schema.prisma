@@ -9,6 +9,7 @@ datasource db {
 
 enum Role {
   user
+  hr
   super_admin
 }
 
@@ -21,6 +22,27 @@ enum ProjectStatus {
   completed
 }
 
+enum JobStatus {
+  open
+  closed
+  on_hold
+}
+
+enum ApplicantStatus {
+  new
+  reviewed
+  shortlisted
+  rejected
+  hired
+}
+
+enum Recommendation {
+  strong_match
+  match
+  partial_match
+  weak_match
+}
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
@@ -31,11 +53,13 @@ model User {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
-  projects       Project[]
+  projects        Project[]
+  jobOpenings     JobOpening[]
+  uploadedResumes Applicant[]    @relation("UploadedResumes")
   settingsUpdates SystemSetting[]
-  apiUsage       ApiUsage[]
-  accounts       Account[]
-  sessions       Session[]
+  apiUsage        ApiUsage[]
+  accounts        Account[]
+  sessions        Session[]
 
   @@map("users")
 }
@@ -104,6 +128,72 @@ model Message {
   @@map("messages")
 }
 
+model JobOpening {
+  id           String    @id @default(cuid())
+  createdById  String    @map("created_by_id")
+  title        String    @db.VarChar(500)
+  department   String?   @db.VarChar(255)
+  location     String?   @db.VarChar(255)
+  employmentType String? @map("employment_type") @db.VarChar(100)
+  experienceLevel String? @map("experience_level") @db.VarChar(100)
+  description  String    @db.Text
+  requirements Json      @default("{}")
+  status       JobStatus @default(open)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  createdBy  User        @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  applicants Applicant[]
+
+  @@index([createdById])
+  @@map("job_openings")
+}
+
+model Applicant {
+  id              String           @id @default(cuid())
+  jobId           String           @map("job_id")
+  uploadedById    String           @map("uploaded_by_id")
+  name            String           @db.VarChar(255)
+  email           String?          @db.VarChar(255)
+  phone           String?          @db.VarChar(50)
+  location        String?          @db.VarChar(255)
+  resumeFileName  String?          @map("resume_file_name") @db.VarChar(500)
+  resumeMime      String?          @map("resume_mime") @db.VarChar(100)
+  resumeText      String?          @map("resume_text") @db.Text
+  parsedData      Json             @default("{}") @map("parsed_data")
+  score           Decimal?         @db.Decimal(5, 2)
+  recommendation  Recommendation?
+  remarks         Json             @default("{}")
+  status          ApplicantStatus  @default(new)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  job          JobOpening    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  uploadedBy   User          @relation("UploadedResumes", fields: [uploadedById], references: [id])
+  analysisRuns AnalysisRun[]
+
+  @@index([jobId])
+  @@index([email])
+  @@map("applicants")
+}
+
+model AnalysisRun {
+  id           String   @id @default(cuid())
+  applicantId  String   @map("applicant_id")
+  score        Decimal? @db.Decimal(5, 2)
+  recommendation Recommendation?
+  result       Json     @default("{}")
+  model        String?  @db.VarChar(100)
+  tokensInput  Int      @default(0) @map("tokens_input")
+  tokensOutput Int      @default(0) @map("tokens_output")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  applicant Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+
+  @@index([applicantId])
+  @@map("analysis_runs")
+}
+
 model SystemSetting {
   id        String   @id @default(cuid())
   key       String   @unique @db.VarChar(255)
@@ -120,6 +210,7 @@ model ApiUsage {
   id           String   @id @default(cuid())
   userId       String?  @map("user_id")
   projectId    String?  @map("project_id")
+  feature      String?  @db.VarChar(100)
   model        String?  @db.VarChar(100)
   tokensInput  Int?     @map("tokens_input")
   tokensOutput Int?     @map("tokens_output")

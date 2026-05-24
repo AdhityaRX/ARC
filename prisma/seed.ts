@@ -8,18 +8,22 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email: "admin@arc.dev" },
-    update: {},
+    update: { role: "super_admin" },
     create: {
       email: "admin@arc.dev",
-      name: "ARC Admin",
+      name: "Super Admin",
       passwordHash,
       role: "super_admin",
     },
   });
 
-  console.log("Seed complete: admin@arc.dev / admin123");
+  console.log("Seed complete.");
+  console.log("  Super Admin → admin@arc.dev / admin123");
 }
 
 main()
-  .catch(console.error)
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
   .finally(() => prisma.$disconnect());
