@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: arc
+      POSTGRES_PASSWORD: arc_dev_password
+      POSTGRES_DB: arc
+    ports:
+      - "5432:5432"
+    volumes:
+      - arc_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U arc -d arc"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://arc:arc_dev_password@postgres:5432/arc
+      AUTH_SECRET: ${AUTH_SECRET:-dev_only_change_me_in_production_8x9w2k}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      # Optional fallback. The Super Admin can also set this from the UI.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    ports:
+      - "3000:3000"
+
+volumes:
+  arc_pgdata:

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "prisma migrate deploy && next build",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "functions": {
+    "src/app/api/jobs/[id]/applicants/route.ts": {
+      "maxDuration": 300
+    },
+    "src/app/api/applicants/[id]/analyze/route.ts": {
+      "maxDuration": 300
+    }
+  }
+}
